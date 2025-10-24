@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - AI News Summarizer{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div class="welcome-section">
+            <h1 class="welcome-title">Hello, {{ username }}! 👋</h1>
+            <p class="welcome-subtitle">Here's your personalized news feed</p>
+        </div>
+        
+        <div class="controls-section">
+            <!-- Category Filter -->
+            <div class="filter-group">
+                <label for="categoryFilter" class="filter-label">Category:</label>
+                <select id="categoryFilter" class="filter-select">
+                    {% for category in categories %}
+                        <option value="{{ category }}" 
+                                {% if category == current_category %}selected{% endif %}>
+                            {{ category|title }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <!-- Search Box -->
+            <div class="search-group">
+                <input type="text" id="searchInput" class="search-input" 
+                       placeholder="Search news...">
+                <button id="searchButton" class="search-btn">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+        <p>Fetching and analyzing news with AI...</p>
+    </div>
+
+    <!-- Error Message Area -->
+    <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+    <!-- Articles Grid -->
+    <div id="articlesGrid" class="articles-grid">
+        <!-- Articles will be dynamically loaded here -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="empty-state" style="display: none;">
+        <div class="empty-icon">📰</div>
+        <h3>No articles found</h3>
+        <p>Try selecting a different category or search term</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+    // Initialize dashboard when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        const initialCategory = '{{ current_category }}';
+        loadNews(initialCategory);
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>AI News Summarizer - {% block title %}Smart News Delivery{% endblock %}</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo.png') }}">
+</head>
+<body class="{% if session.user_id %}logged-in{% else %}logged-out{% endif %}">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="AI News Logo" class="logo">
+                <span class="brand-name">AI News Summarizer</span>
+            </div>
+            
+            <div class="nav-links">
+                {% if session.user_id %}
+                    <a href="{{ url_for('news.dashboard') }}" class="nav-link">Dashboard</a>
+                    <span class="nav-user">Welcome, {{ session.username }}</span>
+                    <a href="{{ url_for('auth.logout') }}" class="nav-link logout-btn">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="nav-link">Login</a>
+                    <a href="{{ url_for('auth.register') }}" class="nav-link register-btn">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">
+                        {{ message }}
+                        <span class="flash-close" onclick="this.parentElement.remove()">×</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <p>&copy; 2024 AI News Summarizer. Built with Flask & Google Gemini AI.</p>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <!-- REMOVE session.js if you're using the session manager in main.js -->
+    <!-- <script src="{{ url_for('static', filename='js/session.js') }}"></script> -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+    
+    <script>
+        // Enhanced cache prevention
+        window.onpageshow = function(event) {
+            if (event.persisted) {
+                console.log('Page restored from browser cache, reloading...');
+                window.location.reload();
+            }
+        };
+
+        // Additional protection: clear forms on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Clear any potentially cached form data
+            if (!document.body.classList.contains('logged-in')) {
+                const forms = document.querySelectorAll('form');
+                forms.forEach(form => {
+                    if (!form.classList.contains('keep-state')) {
+                        form.reset();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
